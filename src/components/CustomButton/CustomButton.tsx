@@ -45,8 +45,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     borderRadius: 8,
     borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "0px 1px 2px 0px #1018280D",
   },
   text: {
     fontFamily: "Inter_18pt-SemiBold",

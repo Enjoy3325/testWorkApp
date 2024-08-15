@@ -2,14 +2,16 @@ import React from 'react';
 import { Modal, View, Text, StyleSheet } from 'react-native';
 import CustomButton from '../CustomButton/CustomButton';
 
-interface ModalOTPProps {
+interface CustomModalProps {
   visible: boolean;
-  otp: number | null;
+  // otp: number | null;
   expirationTime?: string;
+  text: string;
+  subText?: string | any;
   onClose: () => void;
 }
 
-const ModalOTP: React.FC<ModalOTPProps> = ({ visible, otp, onClose }) => {
+const CustomModal: React.FC<CustomModalProps> = ({ visible, subText, text, onClose }) => {
   return (
     <Modal
       visible={visible}
@@ -20,7 +22,12 @@ const ModalOTP: React.FC<ModalOTPProps> = ({ visible, otp, onClose }) => {
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <Text style={styles.text}>
-            Your Code Verification: <Text style={styles.textCode}>{otp !== null ? otp : 'No OTP'}</Text>
+            {/* Your Code Verification:  */}
+            {text}
+          </Text>
+          <Text style={styles.textCode}>
+            {subText}
+            {/* {otp !== null ? otp : 'No OTP'} */}
           </Text>
           <CustomButton
             backgroundColor={"#30B0C7"}
@@ -50,21 +57,22 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     textAlign: "center",
     borderRadius: 8,
+    gap: 16,
   },
   text: {
     textAlign: "center",
     fontFamily: "Inter_18pt-SemiBold",
     fontWeight: "500",
     fontSize: 16,
-    marginBottom: 20,
     color: "#344054"
   },
   textCode: {
     fontFamily: "Outfit-SemiBold",
-    fontSize: 22,
+    textAlign: "center",
+    fontSize: 32,
     fontWeight: "600",
     color: "#00D1AC"
   }
 });
 
-export default ModalOTP;
+export default CustomModal;

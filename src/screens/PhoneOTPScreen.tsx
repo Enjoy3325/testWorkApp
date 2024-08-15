@@ -7,7 +7,7 @@ import CustomInput from "../components/CustomImput/CustomImput";
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from "../types";
 import { StackNavigationProp } from '@react-navigation/stack';
-import ModalOTP from '../components/MadalOTP/ModalOTP';
+import CustomModal from '../components/CustomModal/CustomModal';
 import useOTP from '../services/useOTP';
 import verifyOTP from '../services/verifyOTP';
 
@@ -34,23 +34,24 @@ const PhoneOTPScreen: React.FC = () => {
       const result = await verifyOTP(phoneNumber, code);
 
       if (result.success) {
+        setIsModalVisible(false);
+        setIsCodeValid(true);
         navigation.navigate('Welcome');
       } else {
         setIsCodeValid(false);
-        Alert.alert('The code you entered is incorrect.');
+        setIsModalVisible(true);
       }
     } catch (error) {
-      console.error('Error when checking OTP:', error);
+      console.error('Error verifying OTP:', error);
       Alert.alert('Failed to verify the code. Please try again.');
     }
   };
-
 
   const handleResendCode = async () => {
     try {
       await sendOTP(phoneNumber);
       setCode("");
-
+      setIsCodeValid(null);
       setIsModalVisible(true);
     } catch (error) {
       console.error('Error sending OTP:', error);
@@ -71,7 +72,12 @@ const PhoneOTPScreen: React.FC = () => {
     if (!text && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
-  };
+
+    if (isCodeValid === false) {
+      setIsCodeValid(null);
+      setIsModalVisible(false);
+    }
+  }
 
   const handleFocus = (index: number) => {
     if (code[index] === '') {
@@ -81,7 +87,6 @@ const PhoneOTPScreen: React.FC = () => {
 
   const getInputStyle = (index: number) => {
     const currentChar = code[index];
-
     const baseStyle = styles.input;
     const filledStyle = currentChar ? styles.filledInput : styles.unfilledInput;
     const invalidStyle = isCodeValid === false ? styles.invalidInput : null;
@@ -117,11 +122,17 @@ const PhoneOTPScreen: React.FC = () => {
               </View>
             ))}
           </View>
-          {isCodeValid === false && <Text style={styles.errorText}>The code you entered is incorrect.</Text>}
+          {isCodeValid === false && (
+            <CustomModal
+              visible={isModalVisible}
+              text={"The code you entered is incorrect!"}
+              onClose={() => setIsModalVisible(false)}
+            />)}
           <CustomLink onPress={handleResendCode} text={"Resend the Code"} textAlign={"center"} marginBottom={32} />
-          <ModalOTP
-            visible={isModalVisible}
-            otp={otp}
+          <CustomModal
+            visible={isModalVisible && isCodeValid !== false}
+            text={"Your Code Verification:"}
+            subText={otp !== null ? otp : 'No OTP'}
             onClose={() => setIsModalVisible(false)}
           />
         </View>
@@ -206,7 +217,7 @@ const styles = StyleSheet.create({
   errorText: {
     fontFamily: "Inter_18pt-Regular",
     color: "#FF4D4F",
-    marginTop: 10
+    // marginTop: 10
   },
 });
 

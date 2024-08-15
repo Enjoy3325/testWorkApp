@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, SafeAreaView, KeyboardTypeOptions, ScrollView } from 'react-native';
+import { View, StyleSheet, Text, SafeAreaView, Keyboard, KeyboardTypeOptions, Platform, KeyboardAvoidingView, TouchableWithoutFeedback, ScrollView } from 'react-native';
 import CustomButton from '../components/CustomButton/CustomButton';
 import CustomInput from '../components/CustomImput/CustomImput';
 import CustomLink from '../components/CustomLink/CustomLink';
+// import CustomModal from '../components/CustomModal/CustomModal';
 import WrapperText from '../components/WrapperText/WrapperText';
 import registerUser from '../services/registerUser';
 
@@ -10,6 +11,7 @@ const RegistrationScreen = ({ navigation }: any) => {
   const [name, setName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [phoneNumber, setPhoneNumber] = useState<string>('');
+  // const [isModalVisible, setIsModalVisible] = useState(false);
 
   const inputFields: {
     label: string;
@@ -33,6 +35,7 @@ const RegistrationScreen = ({ navigation }: any) => {
       const result = await registerUser(name, lastName, phoneNumber);
       if (result && result.status === 'success') {
         navigation.navigate('PhoneOTP', { phoneNumber, otp: result.userData.otp });
+        // setIsModalVisible(true);
       } else {
         console.error('Registration failed', result.message);
       }
@@ -43,43 +46,48 @@ const RegistrationScreen = ({ navigation }: any) => {
 
   return (
     <SafeAreaView style={{ flex: 1, justifyContent: "center", backgroundColor: "#FFFFFF" }}>
-      <ScrollView>
-        <View style={styles.container}>
-          <WrapperText title={"Welcome to App"} text={"Please enter your details."} />
-          <View style={styles.wrapperInput}>
-            {inputFields.map((field, index) => (
-              <CustomInput
-                key={index}
-                label={field.label}
-                value={field.value}
-                placeholder={field.placeholder}
-                placeholderTextColor={field.placeholderTextColor}
-                onChangeText={field.onChangeText}
-                keyboardType={field.keyboardType || 'default'}
-              />
-            ))}
-
-          </View>
-          <CustomButton
-            title="Continue"
-            borderColor="transparent"
-            backgroundColor="#30B0C7"
-            textColor="#FFFFFF"
-            onPress={handleRegistration}
-            disabled={isFormValid() ? false : true}
-          />
-          {/* <ModalOTP
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}
+        >
+          <ScrollView style={styles.scrollContainer}>
+            <WrapperText title={"Welcome to App"} text={"Please enter your details."} />
+            <View style={styles.wrapperInput}>
+              {inputFields.map((field, index) => (
+                <CustomInput
+                  key={index}
+                  label={field.label}
+                  value={field.value}
+                  placeholder={field.placeholder}
+                  placeholderTextColor={field.placeholderTextColor}
+                  onChangeText={field.onChangeText}
+                  keyboardType={field.keyboardType || 'default'}
+                />
+              ))}
+            </View>
+            <CustomButton
+              title="Continue"
+              borderColor="transparent"
+              backgroundColor="#30B0C7"
+              textColor="#FFFFFF"
+              onPress={handleRegistration}
+              disabled={isFormValid() ? false : true}
+            />
+            {/* <CustomModal
             visible={isModalVisible}
-            otp={otp}
-            expirationTime={expirationTime}
+            text={"Your Code Verification: "}
+            subText={otp !== null ? otp : 'No OTP'}
             onClose={() => setIsModalVisible(false)}
           /> */}
-          <View style={styles.wrapperLink}>
-            <Text style={styles.text}>Do you have an account?</Text>
-            <CustomLink text={"Login"} />
-          </View>
-        </View>
-      </ScrollView>
+            <View style={styles.wrapperLink}>
+              <Text style={styles.text}>Do you have an account?</Text>
+              <CustomLink text={"Login"} />
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 };
@@ -91,25 +99,31 @@ const styles = StyleSheet.create({
     paddingBottom: 230,
     paddingTop: 80,
   },
+
+  scrollContainer: {
+    flexGrow: 1,
+    paddingBottom: 218,
+  },
+
   wrapperText: {
     display: "flex",
     alignItems: "center",
     gap: 8,
     marginBottom: 40,
   },
+
   wrapperInput: {
     gap: 20,
     marginBottom: 16,
   },
+
   wrapperLink: {
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
     marginTop: 16,
   },
-  title: {
 
-  },
   text: {
     fontFamily: "Inter-Regular",
     fontWeight: "400",
