@@ -8,8 +8,6 @@ const verifyOTP = async (phoneNumber: string, otp: string) => {
       phoneNumber,
       otp,
     });
-
-    console.log('API Response:', response.data);
     return {success: response.data.success};
   } catch (error) {
     console.error('Error when checking OTP:', error);
