@@ -16,17 +16,18 @@ const AppNavigator = () => {
       <Stack.Navigator
         screenOptions={{
           headerStyle: { backgroundColor: '#fff' },
-          headerTintColor: '#000',
+          headerTintColor: '#272727',
           headerTitleStyle: { fontWeight: 'bold' },
           headerBackTitleVisible: false,
-        }}>
+        }}
+      >
         <Stack.Screen name="Home" component={HomeScreen} options={{ headerTitle: '', headerBackTitleVisible: false }} />
         <Stack.Screen name="Registration" component={RegistrationScreen} options={{ headerTitle: '', headerBackTitleVisible: false }} />
         <Stack.Screen name="PhoneOTP" component={PhoneOTPScreen} options={{ headerTitle: '', headerBackTitleVisible: false }} />
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerTitle: '', headerBackTitleVisible: false }} />
         <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerTitle: '', headerBackTitleVisible: false }} />
       </Stack.Navigator>
-    </NavigationContainer>
+    </NavigationContainer >
   );
 };
 
