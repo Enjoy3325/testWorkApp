@@ -19,6 +19,7 @@ const PhoneOTPScreen: React.FC = () => {
   const [isCodeValid, setIsCodeValid] = useState<boolean | null>(null);
   const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
   const navigation = useNavigation<WelcomeScreenNavigationProp>();
+  const [modalText, setModalText] = useState('Your Code Verification:');
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const { phoneNumber } = useRoute<PhoneOTPScreenRouteProp>().params;
@@ -31,30 +32,34 @@ const PhoneOTPScreen: React.FC = () => {
 
   const handleVerifyCode = async () => {
     try {
-      const result = await verifyOTP(phoneNumber, code);
+      const response = await verifyOTP(phoneNumber, code);
 
-      if (result.success) {
-        setIsModalVisible(false);
+      if (response.success) {
         setIsCodeValid(true);
+        setIsModalVisible(false);
         navigation.navigate('Welcome');
       } else {
         setIsCodeValid(false);
+        setModalText("The code you entered is incorrect!");
         setIsModalVisible(true);
       }
     } catch (error) {
       console.error('Error verifying OTP:', error);
       Alert.alert('Failed to verify the code. Please try again.');
+      setIsCodeValid(false);
+      setModalText("The code you entered is incorrect!");
+      setIsModalVisible(true);
     }
   };
 
   const handleResendCode = async () => {
     try {
       await sendOTP(phoneNumber);
-      setCode("");
+      setCode('');
       setIsCodeValid(null);
+      setModalText('New OTP has been sent.');
       setIsModalVisible(true);
     } catch (error) {
-      console.error('Error sending OTP:', error);
       Alert.alert('Failed to resend the code. Please try again later.');
     }
   };
@@ -122,19 +127,16 @@ const PhoneOTPScreen: React.FC = () => {
               </View>
             ))}
           </View>
-          {isCodeValid === false && (
+          <CustomLink onPress={handleResendCode} text={"Resend the Code"} textAlign={"center"} marginBottom={32} />
+          {isModalVisible && (
             <CustomModal
               visible={isModalVisible}
-              text={"The code you entered is incorrect!"}
+              text={modalText}
+              subText={isCodeValid === null ? otp : null}
               onClose={() => setIsModalVisible(false)}
-            />)}
-          <CustomLink onPress={handleResendCode} text={"Resend the Code"} textAlign={"center"} marginBottom={32} />
-          <CustomModal
-            visible={isModalVisible && isCodeValid !== false}
-            text={"Your Code Verification:"}
-            subText={otp !== null ? otp : 'No OTP'}
-            onClose={() => setIsModalVisible(false)}
-          />
+            />
+          )}
+
         </View>
         <CustomButton
           title={"Sign up"}
