@@ -24,7 +24,7 @@ const PhoneOTPScreen: React.FC = () => {
 
   const { phoneNumber } = useRoute<PhoneOTPScreenRouteProp>().params;
   const inputRefs = useRef<TextInput[]>([]);
-  const { otp, sendOTP, loading, error } = useOTP();
+  const { otp, sendOTP } = useOTP();
 
   useEffect(() => {
     setIsButtonDisabled(code.length !== 6 || isCodeValid === false);
