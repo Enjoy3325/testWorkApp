@@ -24,7 +24,7 @@ const PhoneOTPScreen: React.FC = () => {
 
   const { phoneNumber } = useRoute<PhoneOTPScreenRouteProp>().params;
   const inputRefs = useRef<TextInput[]>([]);
-  const { otp, sendOTP, loading, error } = useOTP();
+  const { otp, sendOTP } = useOTP();
 
   useEffect(() => {
     setIsButtonDisabled(code.length !== 6 || isCodeValid === false);
@@ -37,7 +37,7 @@ const PhoneOTPScreen: React.FC = () => {
       if (response.success) {
         setIsCodeValid(true);
         setIsModalVisible(false);
-        navigation.navigate('Welcome');
+        navigation.navigate("Welcome");
       } else {
         setIsCodeValid(false);
         setModalText("The code you entered is incorrect!");
@@ -57,7 +57,7 @@ const PhoneOTPScreen: React.FC = () => {
       await sendOTP(phoneNumber);
       setCode('');
       setIsCodeValid(null);
-      setModalText('New OTP has been sent.');
+      setModalText('A new OTP has been sent.');
       setIsModalVisible(true);
     } catch (error) {
       Alert.alert('Failed to resend the code. Please try again later.');

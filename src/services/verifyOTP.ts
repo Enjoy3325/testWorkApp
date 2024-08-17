@@ -2,12 +2,13 @@ import axios from 'axios';
 interface VerifyOTPResponse {
   phoneNumber: string;
   otp: string;
-  status: 'success' | 'error';
+  status: string;
 }
 
 const verifyOTP = async (
   phoneNumber: string,
   otp: string,
+  validCode: boolean = true,
 ): Promise<{success: boolean}> => {
   try {
     const response = await axios.post<VerifyOTPResponse>(
@@ -15,10 +16,13 @@ const verifyOTP = async (
       {
         phoneNumber,
         otp,
+        validCode,
       },
     );
 
     const {status} = response.data;
+
+    console.log('Verify OTP Response:', response.data);
 
     return {success: status === 'success'};
   } catch (error) {
